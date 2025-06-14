@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+<body>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Edit Restaurant</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/api/restaurants/{id}(id=${restaurant.id})}" method="POST">
+                            <input type="hidden" name="_method" value="PUT">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Restaurant Name</label>
+                                <input type="text" class="form-control" id="name" name="name" th:value="${restaurant.name}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" required th:text="${restaurant.description}"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" th:value="${restaurant.address}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" th:value="${restaurant.phone}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cuisine" class="form-label">Cuisine Type</label>
+                                <input type="text" class="form-control" id="cuisine" name="cuisine" th:value="${restaurant.cuisine}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="priceRange" class="form-label">Price Range</label>
+                                <select class="form-select" id="priceRange" name="priceRange" required>
+                                    <option value="LOW" th:selected="${restaurant.priceRange == 'LOW'}">Low</option>
+                                    <option value="MEDIUM" th:selected="${restaurant.priceRange == 'MEDIUM'}">Medium</option>
+                                    <option value="HIGH" th:selected="${restaurant.priceRange == 'HIGH'}">High</option>
+                                </select>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Update Restaurant</button>
+                                <a th:href="@{/restaurants/{id}(id=${restaurant.id})}" class="btn btn-secondary">Back to Restaurant</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout/footer :: footer"></div>
+</body>
+</html> 

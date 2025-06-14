@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lv.venta.model.CustomOrder;
-import lv.venta.service.OrderService;
+import lv.venta.service.ICustomOrderService;
 import java.util.List;
 
 @RestController
@@ -12,62 +12,53 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    private OrderService orderService;
+    private ICustomOrderService orderService;
 
     @GetMapping
     public ResponseEntity<List<CustomOrder>> getAllOrders() {
-        return ResponseEntity.ok(orderService.findAll());
+        return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomOrder> getOrderById(@PathVariable Long id) {
-        return orderService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<CustomOrder> createOrder(@RequestBody CustomOrder order) {
-        return ResponseEntity.ok(orderService.save(order));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomOrder> updateOrder(@PathVariable Long id, @RequestBody CustomOrder order) {
-        return orderService.findById(id)
-                .map(existingOrder -> {
-                    order.setId(id);
-                    return ResponseEntity.ok(orderService.save(order));
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        return orderService.findById(id)
-                .map(order -> {
-                    orderService.deleteById(id);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<CustomOrder> getOrderById(@PathVariable long id) {
+        try {
+            return ResponseEntity.ok(orderService.getOrderById(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CustomOrder>> getOrdersByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(orderService.findByUserId(userId));
+    public ResponseEntity<List<CustomOrder>> getOrdersByUser(@PathVariable long userId) {
+        try {
+            return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<List<CustomOrder>> getOrdersByRestaurant(@PathVariable Long restaurantId) {
-        return ResponseEntity.ok(orderService.findByRestaurantId(restaurantId));
+    @PostMapping("/place")
+    public ResponseEntity<Void> placeOrder(
+            @RequestParam long userId,
+            @RequestBody List<Long> foodItemIds,
+            @RequestParam(required = false) String specialInstructions) {
+        try {
+            orderService.placeOrder(userId, foodItemIds, specialInstructions);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<CustomOrder> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
-        return orderService.findById(id)
-                .map(order -> {
-                    order.setStatus(status);
-                    return ResponseEntity.ok(orderService.save(order));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> updateOrderStatus(
+            @PathVariable long id,
+            @RequestParam String status) {
+        try {
+            orderService.updateOrderStatus(id, status);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 } 

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lv.venta.model.User;
-import lv.venta.service.UserService;
+import lv.venta.service.IUserService;
 import java.util.List;
 
 @RestController
@@ -12,59 +12,64 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.findAll());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<User> getUserById(@PathVariable long id) {
+        try {
+            return ResponseEntity.ok(userService.getUserById(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.save(user));
+    public ResponseEntity<Void> createUser(@RequestBody User user) {
+        try {
+            userService.insertUser(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.findById(id)
-                .map(existingUser -> {
-                    user.setId(id);
-                    return ResponseEntity.ok(userService.save(user));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> updateUser(@PathVariable long id, @RequestBody User user) {
+        try {
+            userService.updateUser(id, user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        return userService.findById(id)
-                .map(user -> {
-                    userService.deleteById(id);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
+        try {
+            userService.deleteUserById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        return userService.findByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping("/{id}/enable")
+    public ResponseEntity<Void> enableUser(@PathVariable long id, @RequestParam boolean enabled) {
+        try {
+            userService.enableUser(id, enabled);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PutMapping("/{id}/address")
-    public ResponseEntity<User> updateUserAddress(@PathVariable Long id, @RequestBody String address) {
-        return userService.findById(id)
-                .map(user -> {
-                    user.setAddress(address);
-                    return ResponseEntity.ok(userService.save(user));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/role/{role}")
+    public ResponseEntity<List<User>> getUsersByRole(@PathVariable String role) {
+        return ResponseEntity.ok(userService.getUsersByRole(role));
     }
 } 

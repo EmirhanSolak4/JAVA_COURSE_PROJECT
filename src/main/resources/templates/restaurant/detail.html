@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 th:text="${restaurant.name}">Restaurant Name</h3>
+                        <div class="btn-group">
+                            <a th:href="@{/restaurants/{id}/edit(id=${restaurant.id})}" class="btn btn-warning">Edit</a>
+                            <form th:action="@{/api/restaurants/{id}(id=${restaurant.id})}" method="POST" style="display: inline;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this restaurant?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text" th:text="${restaurant.description}">Description</p>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>Contact Information</h5>
+                                <p><strong>Address:</strong> <span th:text="${restaurant.address}"></span></p>
+                                <p><strong>Phone:</strong> <span th:text="${restaurant.phone}"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Details</h5>
+                                <p><strong>Cuisine:</strong> <span th:text="${restaurant.cuisine}"></span></p>
+                                <p><strong>Price Range:</strong> <span th:text="${restaurant.priceRange}"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menu Section -->
+                <div class="card mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>Menu</h4>
+                        <a th:href="@{/restaurants/{id}/menu/add(id=${restaurant.id})}" class="btn btn-primary">Add Menu Item</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Category</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${restaurant.menuItems}">
+                                        <td th:text="${item.name}"></td>
+                                        <td th:text="${item.description}"></td>
+                                        <td th:text="${item.price}"></td>
+                                        <td th:text="${item.category}"></td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a th:href="@{/restaurants/{id}/menu/{itemId}/edit(id=${restaurant.id}, itemId=${item.id})}" class="btn btn-sm btn-warning">Edit</a>
+                                                <form th:action="@{/api/food-items/{id}(id=${item.id})}" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this menu item?')">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>Reviews</h4>
+                        <a th:href="@{/restaurants/{id}/reviews/add(id=${restaurant.id})}" class="btn btn-primary">Add Review</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:each="review : ${restaurant.reviews}" class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <h6 th:text="${review.user.username}">Username</h6>
+                                <small class="text-muted" th:text="${#temporals.format(review.date, 'dd/MM/yyyy')}">Date</small>
+                            </div>
+                            <p class="mb-1" th:text="${review.comment}">Review text</p>
+                            <div class="text-warning">
+                                <span th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
+                                <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}">☆</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout/footer :: footer"></div>
+</body>
+</html> 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+<body>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Edit Menu Item</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/api/food-items/{id}(id=${menuItem.id})}" method="POST">
+                            <input type="hidden" name="_method" value="PUT">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Item Name</label>
+                                <input type="text" class="form-control" id="name" name="name" th:value="${menuItem.name}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" required th:text="${menuItem.description}"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" class="form-control" id="price" name="price" th:value="${menuItem.price}" required>
+                                    <span class="input-group-text">€</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="APPETIZER" th:selected="${menuItem.category == 'APPETIZER'}">Appetizer</option>
+                                    <option value="MAIN_COURSE" th:selected="${menuItem.category == 'MAIN_COURSE'}">Main Course</option>
+                                    <option value="DESSERT" th:selected="${menuItem.category == 'DESSERT'}">Dessert</option>
+                                    <option value="BEVERAGE" th:selected="${menuItem.category == 'BEVERAGE'}">Beverage</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="isVegetarian" class="form-check-label">Vegetarian</label>
+                                <input type="checkbox" class="form-check-input" id="isVegetarian" name="isVegetarian" th:checked="${menuItem.vegetarian}">
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Update Menu Item</button>
+                                <a th:href="@{/restaurants/{id}(id=${restaurantId})}" class="btn btn-secondary">Back to Restaurant</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout/footer :: footer"></div>
+</body>
+</html> 

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+<body>
+    <div class="container mt-4">
+        <!-- Hero Section -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card bg-dark text-white">
+                    <div class="card-body text-center">
+                        <h1 class="display-4">Welcome to Food Delivery</h1>
+                        <p class="lead">Discover the best restaurants and food in your area</p>
+                        <a href="/restaurants" class="btn btn-primary btn-lg">View Restaurants</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restaurants Section -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h2>Featured Restaurants</h2>
+                <div class="row">
+                    <div class="col-md-4 mb-4" th:each="restaurant : ${restaurants}">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${restaurant.name}">Restaurant Name</h5>
+                                <p class="card-text" th:text="${restaurant.description}">Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary" th:text="${restaurant.rating}">Rating</span>
+                                    <a th:href="@{/restaurants/{id}(id=${restaurant.id})}" class="btn btn-primary">View Menu</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Items Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Popular Items</h2>
+                <div class="row">
+                    <div class="col-md-3 mb-4" th:each="item : ${popularItems}">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${item.name}">Food Item Name</h5>
+                                <p class="card-text" th:text="${item.description}">Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-primary" th:text="${item.price + ' €'}">Price</span>
+                                    <span class="badge bg-secondary" th:text="${item.category}">Category</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout/footer :: footer"></div>
+</body>
+</html> 
