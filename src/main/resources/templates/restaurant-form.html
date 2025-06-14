@@ -10,7 +10,7 @@
                         <h3 th:text="${restaurant.id == null ? 'Add New Restaurant' : 'Edit Restaurant'}"></h3>
                     </div>
                     <div class="card-body">
-                        <form th:action="@{${restaurant.id == null ? '/api/restaurants' : '/api/restaurants/' + restaurant.id}}"
+                      <form th:action="@{${restaurant.id == null ? '/restaurants' : '/restaurants/' + restaurant.id}}"
                               method="POST" th:object="${restaurant}">
                             
                             <input type="hidden" name="_method" th:value="${restaurant.id == null ? 'POST' : 'PUT'}">

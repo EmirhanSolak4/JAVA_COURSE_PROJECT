@@ -42,10 +42,10 @@
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <a th:href="@{/restaurants/{id}/edit(id=${restaurant.id})}" class="btn btn-sm btn-warning">Edit</a>
-                                                <form th:action="@{/api/restaurants/{id}(id=${restaurant.id})}" method="POST" style="display: inline;">
-                                                    <input type="hidden" name="_method" value="DELETE">
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this restaurant?')">Delete</button>
-                                                </form>
+												<form th:action="@{/restaurants/{id}/delete(id=${restaurant.id})}" method="POST" style="display: inline;">
+												    <input type="hidden" name="_method" value="DELETE">
+												    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this restaurant?')">Delete</button>
+												</form>
                                             </div>
                                         </td>
                                     </tr>

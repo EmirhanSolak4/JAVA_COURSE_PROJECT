@@ -39,7 +39,7 @@
                                 <div class="btn-group w-100">
                                     <a th:href="@{/restaurants/{restaurantId}/menu/{itemId}/edit(restaurantId=${restaurant.id}, itemId=${item.id})}" 
                                        class="btn btn-sm btn-warning">Edit</a>
-                                    <form th:action="@{/api/restaurants/{restaurantId}/menu/{itemId}(restaurantId=${restaurant.id}, itemId=${item.id})}" 
+                                  <form th:action="@{${menuItem.id == null ? '/food-items' : '/food-items/' + menuItem.id}}"
                                           method="POST" style="display: inline;">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="btn btn-sm btn-danger" 
