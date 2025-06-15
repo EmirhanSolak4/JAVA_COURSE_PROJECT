@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Order #<span th:text="${order.id}"></span></h2>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Details</h5>
+                        <p><strong>Restaurant:</strong> <span th:text="${order.restaurantName}"></span></p>
+                        <p><strong>Date:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge" th:classappend="${order.status == 'DELIVERED' ? 'bg-success' : 
+                                                              order.status == 'IN_PROGRESS' ? 'bg-warning' : 
+                                                              'bg-primary'}"
+                                  th:text="${order.status}"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Items</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${order.items}">
+                                        <td th:text="${item.name}"></td>
+                                        <td th:text="${item.quantity}"></td>
+                                        <td th:text="${'$' + #numbers.formatDecimal(item.price, 1, 2)}"></td>
+                                        <td th:text="${'$' + #numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                        <td th:text="${'$' + #numbers.formatDecimal(order.totalAmount, 1, 2)}"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Delivery Information</h5>
+                        <p><strong>Address:</strong> <span th:text="${order.deliveryAddress}"></span></p>
+                        <p><strong>Phone:</strong> <span th:text="${order.phone}"></span></p>
+                        <p><strong>Delivery Status:</strong> 
+                            <span class="badge" th:classappend="${order.deliveryStatus == 'DELIVERED' ? 'bg-success' : 
+                                                              order.deliveryStatus == 'IN_TRANSIT' ? 'bg-warning' : 
+                                                              'bg-primary'}"
+                                  th:text="${order.deliveryStatus}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout/footer :: footer"></div>
+</body>
+</html> 

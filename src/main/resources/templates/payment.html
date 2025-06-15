@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/header :: head"></head>
+<body>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Payment</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5>Order Summary</h5>
+                            <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
+                            <p><strong>Total Amount:</strong> <span th:text="${'$' + #numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></p>
+                        </div>
+
+                        <form th:action="@{/api/payments/process}" method="POST">
+                            <input type="hidden" name="orderId" th:value="${order.id}">
+                            
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" name="cardNumber" 
+                                       pattern="[0-9]{16}" maxlength="16" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" name="expiryDate" 
+                                           placeholder="MM/YY" pattern="(0[1-9]|1[0-2])\/([0-9]{2})" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" name="cvv" 
+                                           pattern="[0-9]{3}" maxlength="3" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cardHolder" class="form-label">Card Holder Name</label>
+                                <input type="text" class="form-control" id="cardHolder" name="cardHolder" required>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Pay Now</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout/footer :: footer"></div>
+</body>
+</html> 

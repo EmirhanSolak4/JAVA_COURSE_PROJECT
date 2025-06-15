@@ -11,8 +11,14 @@ public interface IReviewService {
 
 	List<Review> getReviewsByRestaurantId(long restaurantId) throws Exception;
 
+	List<Review> getReviewsByUserId(long userId) throws Exception;
+
 	void addReview(long userId, long restaurantId, String comment, int rating) throws Exception;
 
 	double getAverageRatingOfRestaurant(long restaurantId) throws Exception;
+
+	List<Review> getUserReviews(long userId) throws Exception;
+
+	void deleteReview(long id);
 
 }

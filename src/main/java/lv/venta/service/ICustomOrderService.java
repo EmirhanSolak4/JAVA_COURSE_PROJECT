@@ -17,4 +17,6 @@ public interface ICustomOrderService {
 
 	void updateOrderStatus(long orderId, String status) throws Exception;
 
+	List<CustomOrder> getOrdersByRestaurantId(long restaurantId) throws Exception;
+
 }

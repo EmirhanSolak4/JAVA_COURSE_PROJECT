@@ -20,4 +20,6 @@ public interface IUserService {
 
 	List<User> getUsersByRole(String role);
 
+	User getUserByEmailAndPassword(String email, String password) throws Exception;
+
 }

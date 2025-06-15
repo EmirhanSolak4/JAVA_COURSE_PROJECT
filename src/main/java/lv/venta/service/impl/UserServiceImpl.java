@@ -69,4 +69,10 @@ public class UserServiceImpl implements IUserService {
         }
         return users;
     }
+
+	@Override
+	public User getUserByEmailAndPassword(String email, String password) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

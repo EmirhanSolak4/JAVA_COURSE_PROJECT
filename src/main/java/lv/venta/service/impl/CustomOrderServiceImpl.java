@@ -73,4 +73,18 @@ public class CustomOrderServiceImpl implements ICustomOrderService {
         order.setStatus(newStatus);
         orderRepo.save(order);
     }
+
+    @Override
+    public List<CustomOrder> getOrdersByRestaurantId(long restaurantId) throws Exception {
+        List<CustomOrder> results = new ArrayList<>();
+        for (CustomOrder order : orderRepo.findAll()) {
+            for (FoodItem item : order.getItems()) {
+                if (item.getRestaurant().getId() == restaurantId) {
+                    results.add(order);
+                    break;
+                }
+            }
+        }
+        return results;
+    }
 }

@@ -47,6 +47,21 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
+    public List<Review> getReviewsByUserId(long userId) throws Exception {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+
+        List<Review> results = new ArrayList<>();
+        for (Review r : reviewRepo.findAll()) {
+            if (r.getUser().getId() == userId) {
+                results.add(r);
+            }
+        }
+
+        return results;
+    }
+
+    @Override
     public void addReview(long userId, long restaurantId, String comment, int rating) throws Exception {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
@@ -81,4 +96,16 @@ public class ReviewServiceImpl implements IReviewService {
 
         return sum / reviews.size();
     }
+
+	@Override
+	public List<Review> getUserReviews(long userId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteReview(long id) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,73 +1,89 @@
 package lv.venta.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import lv.venta.model.CustomOrder;
-import lv.venta.service.OrderService;
+import lv.venta.service.ICustomOrderService;
+import lv.venta.service.IFoodItemService;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/orders")
+@Controller
+@RequestMapping("/orders")
 public class OrderController {
 
     @Autowired
-    private OrderService orderService;
+    private ICustomOrderService orderService;
+
+    @Autowired
+    private IFoodItemService foodItemService;
 
     @GetMapping
-    public ResponseEntity<List<CustomOrder>> getAllOrders() {
-        return ResponseEntity.ok(orderService.findAll());
+    public String getAllOrders(Model model) {
+        model.addAttribute("orders", orderService.getAllOrders());
+        return "orders";
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomOrder> getOrderById(@PathVariable Long id) {
-        return orderService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public String getOrderById(@PathVariable long id, Model model) {
+        try {
+            model.addAttribute("order", orderService.getOrderById(id));
+            return "order-detail";
+        } catch (Exception e) {
+            return "redirect:/orders?error=" + e.getMessage();
+        }
+    }
+
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("order", new CustomOrder());
+        model.addAttribute("foodItems", foodItemService.getAllFoodItems());
+        return "order-form";
     }
 
     @PostMapping
-    public ResponseEntity<CustomOrder> createOrder(@RequestBody CustomOrder order) {
-        return ResponseEntity.ok(orderService.save(order));
+    public String createOrder(@RequestParam List<Long> foodItemIds, @RequestParam(required = false) String specialInstructions) {
+        try {
+            // TODO: Get current user ID from session
+            long userId = 1L;
+            orderService.placeOrder(userId, foodItemIds, specialInstructions);
+            return "redirect:/orders";
+        } catch (Exception e) {
+            return "redirect:/orders/create?error=" + e.getMessage();
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomOrder> updateOrder(@PathVariable Long id, @RequestBody CustomOrder order) {
-        return orderService.findById(id)
-                .map(existingOrder -> {
-                    order.setId(id);
-                    return ResponseEntity.ok(orderService.save(order));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PostMapping("/{id}/status")
+    public String updateOrderStatus(@PathVariable long id, @RequestParam String status) {
+        try {
+            orderService.updateOrderStatus(id, status);
+            return "redirect:/orders/" + id;
+        } catch (Exception e) {
+            return "redirect:/orders/" + id + "?error=" + e.getMessage();
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        return orderService.findById(id)
-                .map(order -> {
-                    orderService.deleteById(id);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CustomOrder>> getOrdersByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(orderService.findByUserId(userId));
+    @GetMapping("/user")
+    public String getUserOrders(Model model) {
+        try {
+            // TODO: Get current user ID from session
+            long userId = 1L;
+            List<CustomOrder> orders = orderService.getOrdersByUserId(userId);
+            model.addAttribute("orders", orders);
+            return "orders";
+        } catch (Exception e) {
+            return "redirect:/orders?error=" + e.getMessage();
+        }
     }
 
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<List<CustomOrder>> getOrdersByRestaurant(@PathVariable Long restaurantId) {
-        return ResponseEntity.ok(orderService.findByRestaurantId(restaurantId));
+    public String getRestaurantOrders(@PathVariable long restaurantId, Model model) {
+        try {
+            // TODO: Implement getOrdersByRestaurantId in service
+            return "redirect:/restaurants/" + restaurantId;
+        } catch (Exception e) {
+            return "redirect:/restaurants?error=" + e.getMessage();
+        }
     }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<CustomOrder> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
-        return orderService.findById(id)
-                .map(order -> {
-                    order.setStatus(status);
-                    return ResponseEntity.ok(orderService.save(order));
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-} 
+}
